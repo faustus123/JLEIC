@@ -460,23 +460,6 @@ def ProgramExists(program):
 	return None
 
 
-##################################
-# IsNotSWIGWrapper
-##################################
-def IsNotSWIGWrapper(fileNode):
-	# this function takes an input of type SCons.Node.FS.File
-	# i.e., what the Environment.Glob() function returns
-	f = open(fileNode.rstr(),'r')
-	f.readline()  ## the first line is blank
-	# check to see if the first line of the auto-generated file has some magic
-	# let's check to see if it contains the string "SWIG"
-	match = re.search( r'SWIG', f.readline() )
-	f.close()
-	if match:
-		return False
-	else:
-		return True
-
 #===========================================================
 # Package support follows
 #===========================================================
@@ -495,15 +478,6 @@ def AddJANA(env):
 
 	AddCompileFlags(env, AddJANA.JANA_CFLAGS)
 	AddLinkFlags(env, AddJANA.JANA_LINKFLAGS)
-
-
-##################################
-# HDDS
-##################################
-def AddHDDS(env):
-	hdds_home = os.getenv('HDDS_HOME', 'hdds')
-	env.AppendUnique(CPPPATH = ["%s/%s/src" % (hdds_home, env['OSNAME'])])
-	env.AppendUnique(LIBPATH = ["%s/%s/lib" % (hdds_home, env['OSNAME'])])
 
 
 ##################################
