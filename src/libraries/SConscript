@@ -1,0 +1,12 @@
+
+import sbms
+
+import os
+
+Import('env osname')
+
+# Loop over libraries, building each
+subdirs = ['JLEIC_MC']
+
+
+SConscript(dirs=subdirs, exports='env osname', duplicate=0)
