@@ -3,7 +3,7 @@ import sbms
 
 Import('*')
 
-subdirs = []
+subdirs = ['CPPsim']
 
 SConscript(dirs=subdirs, exports='env osname', duplicate=0)
 

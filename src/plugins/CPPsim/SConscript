@@ -1,0 +1,19 @@
+
+
+import sbms
+
+# get env object and clone it
+Import('*')
+env = env.Clone()
+
+sbms.AddJLEIC(env)
+sbms.AddGEANT4(env)
+
+# Getting too many warnings at the moment so disable some of them them.
+ccflags = env['CCFLAGS']
+if '-W' in ccflags : ccflags.remove('-W')
+if '-Wshadow' in ccflags : ccflags.remove('-Wshadow')
+env['CCFLAGS'] = ccflags
+
+
+sbms.plugin(env)
