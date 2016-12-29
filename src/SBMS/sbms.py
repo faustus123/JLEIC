@@ -751,3 +751,15 @@ def AddAmpPlotter(env):
 	env.AppendUnique(CPPPATH = AMPPLOTTER_CPPPATH)
 	env.AppendUnique(LIBPATH = AMPPLOTTER_LIBPATH)
 	env.AppendUnique(LIBS    = AMPPLOTTER_LIBS)
+
+##################################
+# AddGEANT4
+##################################
+def AddGEANT4(env):
+	# Only run mysql_config the first time through
+	if os.getenv('G4SYSTEM') != None:
+		if "GEANT4_CFLAGS" not in AddGEANT4.__dict__:
+			AddGEANT4.GEANT4_CFLAGS    = subprocess.Popen(["geant4-config","--cflags"], stdout=subprocess.PIPE).communicate()[0]
+			AddGEANT4.GEANT4_LINKFLAGS = subprocess.Popen(["geant4-config","--libs"], stdout=subprocess.PIPE).communicate()[0]
+		AddCompileFlags(env, AddGEANT4.GEANT4_CFLAGS)
+		AddLinkFlags(env, AddGEANT4.GEANT4_LINKFLAGS)
