@@ -761,5 +761,26 @@ def AddGEANT4(env):
 		if "GEANT4_CFLAGS" not in AddGEANT4.__dict__:
 			AddGEANT4.GEANT4_CFLAGS    = subprocess.Popen(["geant4-config","--cflags"], stdout=subprocess.PIPE).communicate()[0]
 			AddGEANT4.GEANT4_LINKFLAGS = subprocess.Popen(["geant4-config","--libs"], stdout=subprocess.PIPE).communicate()[0]
+
+			# # find lib directory
+			# g4libdir = ''
+			# for a in AddGEANT4.GEANT4_LINKFLAGS.split():
+			# 	if a.startswith('-L') : g4libdir = a[2:]
+			#
+			# # Remake linkflags to include fullpathnames to libs
+			# tmp = []
+			# for a in AddGEANT4.GEANT4_LINKFLAGS.split():
+			# 	if a.startswith('-L') : continue
+			# 	if a.startswith('-lG4') :
+			# 		tmp += ['%s/lib%s.dylib' % (g4libdir, a[2:])]
+			# 		continue
+			# 	tmp += [a]
+			# AddGEANT4.GEANT4_LINKFLAGS = ''
+			# for a in tmp: AddGEANT4.GEANT4_LINKFLAGS += '%s ' % a
+			# AddGEANT4.GEANT4_LINKFLAGS += ' -Wl,-headerpad_max_install_names -framework OpenGL -fno-common'
+			#
+			# AddGEANT4.GEANT4_CFLAGS += '  -fno-common -DDONT_DECLARE_CXA_PURE_VIRTUAL -DG4USE_STD11 -DIGNORE_SIGHUP_SIGQUIT -DNDEBUG -DSIGNALS_DONT_BREAK_READ -DSIGNAL_WITH_VIO_CLOSE -D_P1003_1B_VISIBLE'
+
+
 		AddCompileFlags(env, AddGEANT4.GEANT4_CFLAGS)
 		AddLinkFlags(env, AddGEANT4.GEANT4_LINKFLAGS)

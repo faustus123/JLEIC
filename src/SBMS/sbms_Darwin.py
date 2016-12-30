@@ -11,5 +11,5 @@ def InitENV(env):
 	env.AppendUnique(LINKFLAGS='-flat_namespace')
 
 	# For plugins that don't have everything when they are linked
+	# env.AppendUnique(SHLINKFLAGS=['-ftls-model=initial-exec', '-undefined', 'dynamic_lookup'])
 	env.AppendUnique(SHLINKFLAGS=['-undefined', 'suppress'])
-
