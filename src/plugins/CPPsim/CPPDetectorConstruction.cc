@@ -29,7 +29,7 @@ using namespace std;
 // geometry (single box of air) that makes some things much quicker
 // when running if you're just trying to debug stuff. Usually, this
 // should be set to "0".
-#define CPP_TRIVIAL_GEOMETRY 0
+#define CPP_TRIVIAL_GEOMETRY 1
 
 // The following is used to hold a globally accessible pointer to B-field.
 // This is accessed by CPPSensitiveDetectorFDC for Lorentz deflections.
@@ -82,6 +82,7 @@ new G4PVPlacement(0,                     //no rotation
 				  false,                 //no boolean operation
 				  0,                     //copy number
 				  true);       // checking overlaps
+_DBG_<<" physWorld=" << physWorld << endl;
 return physWorld;
 
 #else // CPP_TRIVIAL_GEOMETRY
@@ -154,6 +155,8 @@ return physWorld;
 //-------------------------------------------
 void CPPDetectorConstruction::ConstructSDandField(void)
 {
+_DBG__;
+
 	G4SDManager::GetSDMpointer()->SetVerboseLevel(0);
 
 #if CPP_TRIVIAL_GEOMETRY

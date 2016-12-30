@@ -5,6 +5,7 @@
 // Creator: davidl (on Darwin harriet 15.6.0 i386)
 //
 
+#include <dlfcn.h>
 #include <unistd.h>
 #include <signal.h>
 #include <vector>
@@ -51,12 +52,17 @@ bool JEventSource_CPPsim::GEOMOPT = true;
 vector<double> JEventSource_CPPsim::KINE_VALS;
 vector<double> JEventSource_CPPsim::SCAP_VALS;
 
+extern "C" {
+
+//G4GEOM_DLL G4ThreadLocal
+uint64_t _ZTWN14G4GeomSplitterI8G4PVDataE6offsetE[128];
+}
+
 //----------------
 // Constructor
 //----------------
 JEventSource_CPPsim::JEventSource_CPPsim(const char* source_name):JEventSource(source_name)
 {
-_DBG__;
 	gPARMS->SetDefaultParameter("GDMLFILENAME", gGDMLfilename, "Name of GDML geometery file to use.");
 	gPARMS->SetDefaultParameter("MULS", MODE_MULS, "Set to 0 to turn off multiple scattering");
 	gPARMS->SetDefaultParameter("DCAY", MODE_DCAY, "Set to 0 to turn off particle decays");
@@ -66,10 +72,24 @@ _DBG__;
 	gPARMS->SetDefaultParameter("RNDM", RNDM, "Seed for random number generator");
 	gPARMS->SetDefaultParameter("GEOMOPT", GEOMOPT, "Set to 0 to turn off geometry optimization (results in faster startup but slower running)");
 
-_DBG__;
+	// void *handle1 = dlopen("/usr/local/geant4/geant4.10.02.p02fixed.Darwin_macosx10.11-x86_64-llvm8.0.0/lib/Geant4-10.2.2/Darwin-clang/libG4geometry.dylib", RTLD_NOW);
+	// cout << "handle1=" << handle1 << "  symbol=" << dlsym(handle1, "__ZTWN14G4GeomSplitterI8G4PVDataE6offsetE") << endl;
+	// cout << dlerror() << endl;
+	// dlopen("/usr/local/geant4/geant4.10.02.p02fixed.Darwin_macosx10.11-x86_64-llvm8.0.0/lib/Geant4-10.2.2/Darwin-clang/libG4run.dylib", RTLD_NOW);
+
+	// For some reason, the "setupG4ioSystem()" routine defined in G4ios.cc of
+	// the GEANT4 code and existing in the libG4global library does not get
+	// on library load as advertised. Well, for executables it seemed to, but
+	// not when the library is loaded as a dependency to this plugin on Mac OS X.
+	// (note that I tried explicitly opening the libray via dlopen which also
+	// didn't call the routine.) That routine only calls G4iosInitialization()
+	// which is declared in the G4ios.h header. It is explicitly called here
+	// since G4cout is left as a NULL pointer otherwise causing seg faults.
+	G4iosInitialization();
+
 	// Read the control.in file
 	ReadControl_in();
-_DBG__;
+
 	// Confirm existence of all specified macros
 	bool all_macros_exist = true;
 	for(unsigned int i=0; i<GEANT4_MACROS.size(); i++){
@@ -91,6 +111,7 @@ _DBG__;
 
 	// Create G4RunManager and use it to initialize GEANT4
 	runManager = new G4MTRunManager;
+	runManager->SetVerboseLevel(2);
 	runManager->SetNumberOfThreads(NG4THREADS);
 	runManager->SetGeometryToBeOptimized(GEOMOPT);
 	runManager->SetUserInitialization(new CPPDetectorConstruction(gGDMLfilename));
@@ -416,6 +437,7 @@ void JEventSource_CPPsim::ReadControl_in(void)
 		G4cout << "GDML geometry file not specified." << G4endl;
 		G4cout << "  looking for ./cpproot.gdml ... "; G4cout.flush();
 		ifstream ifs("./cpproot.gdml");
+
 		if(ifs.is_open()){
 			ifs.close();
 			G4cout << "yes" << G4endl;
