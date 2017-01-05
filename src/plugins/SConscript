@@ -3,8 +3,8 @@ import sbms
 
 Import('*')
 
-subdirs = ['CPPsim']
+subdirs = ['vtx_mc']
 
 SConscript(dirs=subdirs, exports='env osname', duplicate=0)
 
-sbms.OptionallyBuild(env, [])
+sbms.OptionallyBuild(env, ['CPPsim'])
