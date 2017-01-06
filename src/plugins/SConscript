@@ -3,7 +3,7 @@ import sbms
 
 Import('*')
 
-subdirs = ['vtx_mc']
+subdirs = ['vtx_mc', 'vtx_fit']
 
 SConscript(dirs=subdirs, exports='env osname', duplicate=0)
 

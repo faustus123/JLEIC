@@ -1,0 +1,14 @@
+
+
+import sbms
+
+# get env object and clone it
+Import('*')
+env = env.Clone()
+
+sbms.AddJLEIC(env)
+sbms.AddROOT(env)
+env.AppendUnique(LIBS=['TreePlayer'])
+sbms.plugin(env)
+
+
